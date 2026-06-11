@@ -5,7 +5,8 @@ import base64
 
 st.set_page_config(
     page_title="Inicio ",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
 def cargar_css():
