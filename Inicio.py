@@ -17,7 +17,7 @@ def imagen_base64(ruta):
     with open(ruta, "rb") as img:
         return base64.b64encode(img.read()).decode()
 
-foto = imagen_base64("assets/img/foto.jpg")
+foto = imagen_base64("assets/img/foto.png")
 
 # aislar estilos personalizados 
 st.markdown("""<div class='site-root'>""", unsafe_allow_html=True)
