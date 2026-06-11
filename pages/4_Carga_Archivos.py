@@ -1,4 +1,5 @@
 # PÁGINA DE CARGA DE ARCHIVOS
+import io
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -13,6 +14,62 @@ st.set_page_config(
 def cargar_css():
     with open("assets/styles/analisis.css", "r", encoding="utf-8") as archivo:
         st.markdown(f"<style>{archivo.read()}</style>", unsafe_allow_html=True)
+
+
+def cargar_csv_con_progreso(archivo, progress_bar, status_text):
+    archivo.seek(0)
+    total_bytes = getattr(archivo, "size", None)
+
+    if total_bytes is None:
+        contenido = archivo.read()
+        total_bytes = len(contenido)
+        archivo_bytes = io.BytesIO(contenido)
+    else:
+        archivo_bytes = archivo
+
+    dfs = []
+    bytes_leidos = 0
+
+    for chunk in pd.read_csv(
+        archivo_bytes,
+        chunksize=10000,
+        encoding="utf-8",
+        on_bad_lines="skip"
+    ):
+        dfs.append(chunk)
+        bytes_leidos = archivo_bytes.tell()
+        if total_bytes:
+            progreso = min(int(bytes_leidos / total_bytes * 100), 99)
+            progress_bar.progress(progreso)
+            status_text.text(f"Leyendo CSV... {progreso}%")
+
+    if dfs:
+        df = pd.concat(dfs, ignore_index=True)
+    else:
+        df = pd.DataFrame()
+
+    progress_bar.progress(100)
+    status_text.text("Lectura de CSV completada")
+    archivo.seek(0)
+    return df
+
+
+def cargar_excel_con_progreso(archivo, progress_bar, status_text):
+    status_text.text("Leyendo archivo Excel...")
+    progress_bar.progress(25)
+    archivo.seek(0)
+
+    if archivo.name.endswith(".xls"):
+        df = pd.read_excel(archivo, engine="xlrd")
+    else:
+        df = pd.read_excel(archivo, engine="openpyxl")
+
+    progress_bar.progress(80)
+    status_text.text("Procesando datos de Excel...")
+    progress_bar.progress(100)
+    status_text.text("Lectura de Excel completada")
+    archivo.seek(0)
+    return df
 
 
 cargar_css()
@@ -57,12 +114,18 @@ archivo = st.file_uploader(
 if archivo is not None:
 
     try:
+        progress_bar = st.progress(0)
+        status_text = st.empty()
+        status_text.text("Iniciando carga del archivo...")
+
         if archivo.name.endswith(".csv"):
-            df_cargado = pd.read_csv(archivo)
+            df_cargado = cargar_csv_con_progreso(archivo, progress_bar, status_text)
         else:
-            df_cargado = pd.read_excel(archivo)
+            df_cargado = cargar_excel_con_progreso(archivo, progress_bar, status_text)
 
         st.success("Archivo cargado correctamente")
+        status_text.empty()
+        progress_bar.empty()
         st.markdown(f"""
 <div class="chart-title">
 <h4>Resumen del archivo cargado</h4>
@@ -108,12 +171,13 @@ Se muestran los primeros registros del archivo cargado
 </div>
 """, unsafe_allow_html=True)
 
+        filas_max = max(min(len(df_cargado), 100), 1)
         cantidad = st.slider(
             "Cantidad de filas a visualizar",
-            min_value=10,
-            max_value=len(df_cargado),
-            value=50,
-            step=10
+            min_value=1,
+            max_value=filas_max,
+            value=min(50, filas_max),
+            step=1
         )
         
         st.dataframe(
