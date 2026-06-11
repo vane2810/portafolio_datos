@@ -13,7 +13,8 @@ from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 
 st.set_page_config(
     page_title="Aprendizaje Automático",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
 

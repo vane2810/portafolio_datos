@@ -9,7 +9,8 @@ from urllib.parse import urlparse
 
 st.set_page_config(
     page_title="Análisis de Sentimientos",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
 

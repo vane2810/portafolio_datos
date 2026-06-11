@@ -50,7 +50,8 @@ st.markdown("""
 archivo = st.file_uploader(
     "Selecciona un archivo CSV o Excel",
     type=["csv", "xlsx", "xls"],
-    accept_multiple_files=False
+    accept_multiple_files=False,
+    initial_sidebar_state="collapsed"
 )
 
 

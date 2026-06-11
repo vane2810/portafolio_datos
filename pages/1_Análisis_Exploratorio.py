@@ -8,7 +8,8 @@ import plotly.express as px
 
 st.set_page_config(
     page_title="Análisis Exploratorio",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
 #carga archivo css

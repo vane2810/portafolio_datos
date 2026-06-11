@@ -9,7 +9,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 st.set_page_config(
     page_title="Sistema de Recomendación",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
 

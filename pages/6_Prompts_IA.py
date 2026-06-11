@@ -6,7 +6,7 @@ import streamlit as st
 import pandas as pd
 import re
 
-st.set_page_config(page_title="Prompts IA", layout="wide")
+st.set_page_config(page_title="Prompts IA", layout="wide",initial_sidebar_state="collapsed")
 
 def cargar_css():
     with open("assets/styles/analisis.css", "r", encoding="utf-8") as archivo:
