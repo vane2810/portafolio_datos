@@ -55,12 +55,12 @@ archivo = st.file_uploader(
 
 
 if archivo is not None:
-
     try:
-        if archivo.name.endswith(".csv"):
-            df_cargado = pd.read_csv(archivo)
-        else:
-            df_cargado = pd.read_excel(archivo)
+        with st.spinner(f"Procesando {archivo.name}, por favor espera..."):
+            if archivo.name.endswith(".csv"):
+                df_cargado = pd.read_csv(archivo)
+            else:
+                df_cargado = pd.read_excel(archivo)
 
         st.success("Archivo cargado correctamente")
         st.markdown(f"""
