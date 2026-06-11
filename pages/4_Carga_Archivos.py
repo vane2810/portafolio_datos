@@ -112,7 +112,6 @@ archivo = st.file_uploader(
 
 
 if archivo is not None:
-
     try:
         progress_bar = st.progress(0)
         status_text = st.empty()
